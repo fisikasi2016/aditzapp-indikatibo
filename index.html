@@ -1,0 +1,424 @@
+<!doctype html>
+<html lang="eu">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Aditzak</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#2563eb" />
+
+  <!-- Lizentzia metadatuak -->
+  <link rel="license" href="https://creativecommons.org/licenses/by-nc/4.0/" />
+  <meta name="license" content="CC BY-NC 4.0" />
+  <meta name="author" content="@Fisikasi" />
+
+  <style>
+    :root{
+      --blue:#2563eb;
+      --green:#16a34a;
+      --black:#111827;
+      --border:#d1d5db;
+    }
+
+    body{
+      font-family: system-ui, Arial, sans-serif;
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      background: #fafafa;
+    }
+
+    .wrap{
+      width: min(980px, 92vw);
+      text-align: center;
+      padding: 28px 18px 22px;
+    }
+
+    .panel{
+      display:flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin: 14px 0 18px;
+    }
+
+    .actions{
+      display:flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin: 8px 0 18px;
+    }
+
+    button{
+      padding: 16px 22px;
+      border-radius: 18px;
+      border: 2px solid var(--border);
+      background: #fff;
+      cursor: pointer;
+      font-weight: 900;
+      font-size: 22px;
+      letter-spacing: .4px;
+    }
+
+    button.selected{
+      background: var(--blue);
+      color: #fff;
+      border-color: var(--blue);
+    }
+
+    #sakatuBtn{
+      background: var(--green);
+      color: #fff;
+      border-color: var(--green);
+    }
+
+    #emaitzakBtn{
+      background: var(--black);
+      color: #fff;
+      border-color: var(--black);
+    }
+
+    .pill{
+      font-size: 30px;
+      font-weight: 1000;
+      padding: 14px 20px;
+      border-radius: 999px;
+      display: inline-block;
+      border: 2px solid #e5e7eb;
+      min-width: min(760px, 92vw);
+      text-align: center;
+      letter-spacing: 2px;
+      background: #fef9c3;
+    }
+
+    .box{
+      margin: 16px auto 0;
+      padding: 16px 18px;
+      border: 2px dashed #bdbdbd;
+      border-radius: 18px;
+      max-width: 820px;
+      background: #fff;
+    }
+
+    .box h3{
+      margin: 0 0 10px;
+      font-size: 16px;
+      opacity: .8;
+      letter-spacing: 1px;
+    }
+
+    .line{
+      margin: 10px 0 0;
+      font-weight: 1000;
+      font-size: 22px;
+    }
+
+    .muted{
+      margin: 0;
+      opacity: .8;
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    code{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-weight: 900;
+      font-size: 22px;
+    }
+
+    footer{
+      margin-top: 22px;
+      font-size: 14px;
+      opacity: .85;
+    }
+
+    footer a{ color: inherit; font-weight: 800; }
+    footer img{ vertical-align: middle; }
+  </style>
+</head>
+
+<body>
+  <main class="wrap">
+
+    <div class="panel" id="panel">
+      <button data-case="NOR">Nor</button>
+      <button data-case="NOR_NORK">Nor-Nork</button>
+      <button data-case="NOR_NORI">Nor-Nori</button>
+      <button data-case="NOR_NORI_NORK">Nor-Nori-Nork</button>
+    </div>
+
+    <div class="actions">
+      <button id="sakatuBtn">SORTU</button>
+      <button id="emaitzakBtn">EMAITZAK</button>
+    </div>
+
+    <div>
+      <span class="pill" id="result">—</span>
+    </div>
+
+    <div class="box" id="solutionsBox">
+      <p class="muted"></p>
+    </div>
+
+    <footer>
+
+      <p style="margin:0 0 12px;">
+        <img src="logo.png" alt="Fisikasi logoa" style="height:60px;" />
+      </p>
+
+      <p style="margin:0 0 8px;">
+        <a href="https://creativecommons.org/licenses/by-nc/4.0/"
+          target="_blank" rel="license noopener">
+          <img alt="Creative Commons Lizentzia" style="border-width:0"
+              src="https://i.creativecommons.org/l/by-nc/4.0/88x31.png" />
+        </a>
+      </p>
+
+      <p style="margin:0;">
+        Lan hau <strong>@Fisikasi</strong>-rena da, eta
+        <a href="https://creativecommons.org/licenses/by-nc/4.0/"
+          target="_blank" rel="license noopener">
+          Creative Commons Aitortu–EzKomertziala 4.0 (CC BY-NC 4.0)
+        </a>
+        lizentziapean dago.
+      </p>
+
+    </footer>
+
+  </main>
+
+<script>
+  const panel = document.getElementById("panel");
+  const sakatuBtn = document.getElementById("sakatuBtn");
+  const emaitzakBtn = document.getElementById("emaitzakBtn");
+  const result = document.getElementById("result");
+  const solutionsBox = document.getElementById("solutionsBox");
+
+  // =========================
+  //  SOLUZIOAK (ORAIN / LEHEN)
+  // =========================
+
+  const SOL_NOR = {
+    "NI":    { orain: "naiz",   lehen: "nintzen" },
+    "ZU":    { orain: "zara",   lehen: "zinen" },
+    "HURA":  { orain: "da",     lehen: "zen" },
+    "GU":    { orain: "gara",   lehen: "ginen" },
+    "ZUEK":  { orain: "zarete", lehen: "zineten" },
+    "HAIEK": { orain: "dira",   lehen: "ziren" }
+  };
+
+  const SOL_NOR_NORI_HURA = {
+    "HURA-NIRI":  { orain: "zait",   lehen: "zitzaidan" },
+    "HURA-ZURI":  { orain: "zaizu",  lehen: "zitzaizun" },
+    "HURA-HARI":  { orain: "zaio",   lehen: "zitzaion" },
+    "HURA-GURI":  { orain: "zaigu",  lehen: "zitzaigun" },
+    "HURA-ZUEI":  { orain: "zaizue", lehen: "zitzaizuen" },
+    "HURA-HAIEI": { orain: "zaie",   lehen: "zitzaien" }
+  };
+
+  const SOL_NOR_NORI_HAIEK = {
+    "HAIEK-NIRI":  { orain: "zaizkit",   lehen: "zitzaizkidan" },
+    "HAIEK-ZURI":  { orain: "zaizkizu",  lehen: "zitzaizkizun" },
+    "HAIEK-HARI":  { orain: "zaizkio",   lehen: "zitzaizkion" },
+    "HAIEK-GURI":  { orain: "zaizkigu",  lehen: "zitzaizkigun" },
+    "HAIEK-ZUEI":  { orain: "zaizkizue", lehen: "zitzaizkizuen" },
+    "HAIEK-HAIEI": { orain: "zaizkie",   lehen: "zitzaizkien" }
+  };
+
+  const SOL_NOR_NORK = {
+    "NIK-HURA":  { orain: "dut",       lehen: "nuen" },
+    "NIK-ZU":    { orain: "zaitut",    lehen: "zintudan" },
+    "NIK-ZUEK":  { orain: "zaituztet", lehen: "zintuztedan" },
+    "NIK-HAIEK": { orain: "ditut",     lehen: "nituen" },
+
+    "HARK-NI":    { orain: "nau",       lehen: "ninduen" },
+    "HARK-HURA":  { orain: "du",        lehen: "zuen" },
+    "HARK-GU":    { orain: "gaitu",     lehen: "gintuen" },
+    "HARK-ZU":    { orain: "zaitu",     lehen: "zintuen" },
+    "HARK-ZUEK":  { orain: "zaituzte",  lehen: "zintuzten" },
+    "HARK-HAIEK": { orain: "ditu",      lehen: "zituen" },
+
+    "GUK-HURA":  { orain: "dugu",       lehen: "genuen" },
+    "GUK-ZU":    { orain: "zaitugu",    lehen: "zintugun" },
+    "GUK-ZUEK":  { orain: "zaituztegu", lehen: "zintuztegun" },
+    "GUK-HAIEK": { orain: "ditugu",     lehen: "genituen" },
+
+    "ZUK-NI":    { orain: "nauzu",     lehen: "ninduzun" },
+    "ZUK-HURA":  { orain: "duzu",      lehen: "zenuen" },
+    "ZUK-GU":    { orain: "gaituzu",   lehen: "gintuzun" },
+    "ZUK-HAIEK": { orain: "dituzu",    lehen: "zenituen" },
+
+    "ZUEK-NI":   { orain: "nauzue",    lehen: "ninduzuen" },
+    "ZUEK-HURA": { orain: "duzue",     lehen: "zenuten" },
+    "ZUEK-GU":   { orain: "gaituzue",  lehen: "gintuzuen" },
+    "ZUEK-HAIEK":{ orain: "dituzue",   lehen: "zenituzten" },
+
+    "HAIEK-NI":    { orain: "naute",      lehen: "ninduten" },
+    "HAIEK-HURA":  { orain: "dute",       lehen: "zuten" },
+    "HAIEK-GU":    { orain: "gaituzte",   lehen: "gintuzten" },
+    "HAIEK-ZU":    { orain: "zaituzte",   lehen: "zintuzten" },
+    "HAIEK-ZUEK":  { orain: "zaituztete", lehen: "zintuzteten" },
+    "HAIEK-HAIEK": { orain: "dituzte",    lehen: "zituzten" }
+  };
+
+  const SOL_NOR_NORI_NORK = {
+    "NIK-HARI-HURA":   { orain: "diot",   lehen: "nion" },
+    "NIK-ZURI-HURA":   { orain: "dizut",  lehen: "nizun" },
+    "NIK-ZUEI-HURA":   { orain: "dizuet", lehen: "nizuen" },
+    "NIK-HAIEI-HURA":  { orain: "diet",   lehen: "nien" },
+    "NIK-HARI-HAIEK":  { orain: "dizkiot",   lehen: "nizkion" },
+    "NIK-ZURI-HAIEK":  { orain: "dizkizut",  lehen: "nizkizun" },
+    "NIK-ZUEI-HAIEK":  { orain: "dizkizuet", lehen: "nizkizuen" },
+    "NIK-HAIEI-HAIEK": { orain: "dizkiet",   lehen: "nizkien" },
+
+    "HARK-NIRI-HURA":  { orain: "dit",   lehen: "zidan" },
+    "HARK-HARI-HURA":  { orain: "dio",   lehen: "zion" },
+    "HARK-GURI-HURA":  { orain: "digu",  lehen: "zigun" },
+    "HARK-ZURI-HURA":  { orain: "dizu",  lehen: "zizun" },
+    "HARK-ZUEI-HURA":  { orain: "dizue", lehen: "zizuen" },
+    "HARK-HAIEI-HURA": { orain: "die",   lehen: "zien" },
+    "HARK-NIRI-HAIEK":  { orain: "dizkit",   lehen: "zizkidan" },
+    "HARK-HARI-HAIEK":  { orain: "dizkio",   lehen: "zizkion" },
+    "HARK-GURI-HAIEK":  { orain: "dizkigu",  lehen: "zizkigun" },
+    "HARK-ZURI-HAIEK":  { orain: "dizkizu",  lehen: "zizkizun" },
+    "HARK-ZUEI-HAIEK":  { orain: "dizkizue", lehen: "zizkizuen" },
+    "HARK-HAIEI-HAIEK": { orain: "dizkie",   lehen: "zizkien" },
+
+    "GUK-HARI-HURA":   { orain: "diogu",   lehen: "genion" },
+    "GUK-ZURI-HURA":   { orain: "dizugu",  lehen: "genizun" },
+    "GUK-ZUEI-HURA":   { orain: "dizuegu", lehen: "genizuen" },
+    "GUK-HAIEI-HURA":  { orain: "diegu",   lehen: "genien" },
+    "GUK-HARI-HAIEK":  { orain: "dizkiogu",   lehen: "genizkion" },
+    "GUK-ZURI-HAIEK":  { orain: "dizkizugu",  lehen: "genizkizun" },
+    "GUK-ZUEI-HAIEK":  { orain: "dizkizuegu", lehen: "genizkizuen" },
+    "GUK-HAIEI-HAIEK": { orain: "dizkiegu",   lehen: "genizkien" },
+
+    "ZUK-NIRI-HURA":   { orain: "didazu",  lehen: "zenidan" },
+    "ZUK-HARI-HURA":   { orain: "diozu",   lehen: "zenion" },
+    "ZUK-GURI-HURA":   { orain: "diguzu",  lehen: "zenigun" },
+    "ZUK-HAIEI-HURA":  { orain: "diezu",   lehen: "zenien" },
+    "ZUK-NIRI-HAIEK":   { orain: "dizkidazu",  lehen: "zenizkidan" },
+    "ZUK-HARI-HAIEK":   { orain: "dizkiozu",   lehen: "zenizkion" },
+    "ZUK-GURI-HAIEK":   { orain: "dizkiguzu",  lehen: "zenizkigun" },
+    "ZUK-HAIEI-HAIEK":  { orain: "dizkiezu",   lehen: "zenizkien" },
+
+    "ZUEK-NIRI-HURA":  { orain: "didazue", lehen: "zenidaten" },
+    "ZUEK-HARI-HURA":  { orain: "diozue",  lehen: "zenioten" },
+    "ZUEK-GURI-HURA":  { orain: "diguzue", lehen: "zeniguten" },
+    "ZUEK-HAIEI-HURA": { orain: "diezue",  lehen: "zenieten" },
+    "ZUEK-NIRI-HAIEK":  { orain: "dizkidazue", lehen: "zenizkidaten" },
+    "ZUEK-HARI-HAIEK":  { orain: "dizkiozue",  lehen: "zenizkioten" },
+    "ZUEK-GURI-HAIEK":  { orain: "dizkiguzue", lehen: "zenizkiguten" },
+    "ZUEK-HAIEI-HAIEK": { orain: "dizkiezue",  lehen: "zenizkieten" },
+
+    "HAIEK-NIRI-HURA":  { orain: "didate",  lehen: "zidaten" },
+    "HAIEK-HARI-HURA":  { orain: "diote",   lehen: "zioten" },
+    "HAIEK-GURI-HURA":  { orain: "digute",  lehen: "ziguten" },
+    "HAIEK-ZURI-HURA":  { orain: "dizute",  lehen: "zizuten" },
+    "HAIEK-ZUEI-HURA":  { orain: "dizuete", lehen: "zizueten" },
+    "HAIEK-HAIEI-HURA": { orain: "diete",   lehen: "zieten" },
+    "HAIEK-NIRI-HAIEK":  { orain: "dizkidate",  lehen: "zizkidaten" },
+    "HAIEK-HARI-HAIEK":  { orain: "dizkiote",   lehen: "zizkioten" },
+    "HAIEK-GURI-HAIEK":  { orain: "dizkigute",  lehen: "zizkiguten" },
+    "HAIEK-ZURI-HAIEK":  { orain: "dizkizute",  lehen: "zizkizuten" },
+    "HAIEK-ZUEI-HAIEK":  { orain: "dizkizuete", lehen: "zizkizueten" },
+    "HAIEK-HAIEI-HAIEK": { orain: "dizkiete",   lehen: "zizkieten" }
+  };
+
+  function setBoxIdle(msg){
+    solutionsBox.innerHTML = `<h3>EMAITZAK</h3><p class="muted">${msg}</p>`;
+  }
+
+  function showSolutions(key, sol){
+    solutionsBox.innerHTML = `
+      <h2>EMAITZAK</h2>
+      <p class="line">ORAINALDIA: <code>${sol.orain}</code></p>
+      <p class="line">LEHENALDIA: <code>${sol.lehen}</code></p>
+    `;
+  }
+
+  panel.addEventListener("click", (e) => {
+    const btn = e.target.closest("button");
+    if(!btn) return;
+    btn.classList.toggle("selected");
+  });
+
+  let lastKey = null;
+  let lastSol = null;
+
+  function pickRandom(arr){ return arr[Math.floor(Math.random() * arr.length)]; }
+
+  function genFromCase(caseType){
+    if(caseType === "NOR"){
+      const keys = Object.keys(SOL_NOR);
+      const k = pickRandom(keys);
+      return { key: k, sol: SOL_NOR[k] };
+    }
+
+    if(caseType === "NOR_NORI"){
+      const merged = { ...SOL_NOR_NORI_HURA, ...SOL_NOR_NORI_HAIEK };
+      const keys = Object.keys(merged);
+      const k = pickRandom(keys);
+      return { key: k, sol: merged[k] };
+    }
+
+    if(caseType === "NOR_NORK"){
+      const keys = Object.keys(SOL_NOR_NORK);
+      const k = pickRandom(keys);
+      return { key: k, sol: SOL_NOR_NORK[k] };
+    }
+
+    if(caseType === "NOR_NORI_NORK"){
+      const keys = Object.keys(SOL_NOR_NORI_NORK);
+      const k = pickRandom(keys);
+      return { key: k, sol: SOL_NOR_NORI_NORK[k] };
+    }
+
+    return null;
+  }
+
+  sakatuBtn.addEventListener("click", () => {
+    const selected = [...panel.querySelectorAll("button.selected")];
+
+    if(selected.length === 0){
+      result.textContent = "—";
+      lastKey = null;
+      lastSol = null;
+      setBoxIdle("Aukeratu gutxienez sistema bat.");
+      return;
+    }
+
+    const chosenBtn = pickRandom(selected);
+    const pack = genFromCase(chosenBtn.dataset.case);
+
+    lastKey = pack.key.toUpperCase();
+    lastSol = pack.sol;
+
+    result.textContent = lastKey;
+    setBoxIdle("-");
+  });
+
+  emaitzakBtn.addEventListener("click", () => {
+    if(!lastKey || !lastSol){
+      setBoxIdle("Lehenengo SAKATU egin.");
+      return;
+    }
+    showSolutions(lastKey, lastSol);
+  });
+
+  // Registrar el service worker
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("./service-worker.js")
+        .then(() => console.log("Service Worker ondo erregistratua"))
+        .catch((error) => console.error("Service Worker errorea:", error));
+    });
+  }
+</script>
+
+</body>
+</html>
