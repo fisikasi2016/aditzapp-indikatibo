@@ -1,6 +1,6 @@
 {
-  "name": "Aditzak",
-  "short_name": "Aditzak",
+  "name": "Aditzapp Indikatiboa",
+  "short_name": "Aditzapp",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#fafafa",
